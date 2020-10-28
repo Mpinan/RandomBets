@@ -1,11 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const session = require("express-session")
+const session = require("express-session");
 // const jwt = require("jsonwebtoken");
 // const bcrypt = require("bcrypt");
 
 const app = express();
-const port = 3001;
+const TWO_HOURS = 1000 * 60 * 60 * 2;
 const cors = require("cors"); // allows/disallows cross-site communication
 
 app.use(
@@ -14,6 +14,7 @@ app.use(
     extended: true,
   })
 );
+const { PORT = 3001, SESS_LIFETIME = TWO_HOURS } = process.env;
 
 const whitelist = ["http://localhost:3000"];
 const corsOptions = {
@@ -27,11 +28,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(session({
-  cookie: {
-    maxAge: 2
-  }
-}))
+app.use(
+  session({
+    cookie: {
+      maxAge: 2,
+    },
+  })
+);
 
 app.get("/", (request, response) => {
   response.json({ info: "Node.js, Express, and Postgres API" });
@@ -40,5 +43,5 @@ app.get("/", (request, response) => {
 //UserRoutes
 
 app.listen(port, () => {
-  console.log(`App running on port ${port}.`);
+  console.log(`App running on port ${PORT}.`);
 });
